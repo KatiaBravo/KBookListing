@@ -33,19 +33,19 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
         final Button searchButton = (Button) findViewById(R.id.search_button);
 
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
+        bookListView = (ListView) findViewById(R.id.list);
         bookListView.setAdapter(mAdapter);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            searchTerm = searchBar.getText().toString();
-            setContentView(R.layout.book_list_item);
-            bookListView = (ListView) findViewById(R.id.list);
+            searchTerm = searchBar.getText().toString().replaceAll(" ", "+");
             mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
 
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
+                mEmptyStateTextView.setVisibility(View.GONE);
                 LoaderManager loaderManager = getLoaderManager();
                 loaderManager.initLoader(LOADER_ID, null, BookActivity.this);
             } else {
@@ -60,8 +60,7 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
 
     @Override
     public android.content.Loader<List<Book>> onCreateLoader(int id, Bundle args) {
-        return new BookLoader(this, BOOK_REQUEST_URL);
-        //TODO: check what the searchTerm does
+        return new BookLoader(this, BOOK_REQUEST_URL +  searchTerm);
     }
 
     @Override
