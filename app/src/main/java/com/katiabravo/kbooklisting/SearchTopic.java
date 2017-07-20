@@ -23,6 +23,7 @@ import java.util.List;
  */
 
 public final class SearchTopic {
+
     private static final String LOG_TAG= SearchTopic.class.getSimpleName();
 
     private static URL createUrl(String stringUrl) {

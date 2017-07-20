@@ -23,8 +23,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
         View listItemView = convertView;
 
         if(listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.book_list_item, parent, false);
+            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.book_list_item, parent, false);
         }
 
         Book currentBook = getItem(position);
@@ -36,6 +35,8 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         TextView authorTextView = (TextView) listItemView.findViewById(R.id.author);
         authorTextView.setText(currentBook.getAuthor().toString());
+
+        //TODO: format the author to have all the authors and delete the quotes and squarebracets
 
         return listItemView;
     }

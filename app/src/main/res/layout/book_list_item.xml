@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="15sp"
+            android:paddingLeft="8dp"
             android:id="@+id/maturity"
             tools:text="Maturity"/>
 

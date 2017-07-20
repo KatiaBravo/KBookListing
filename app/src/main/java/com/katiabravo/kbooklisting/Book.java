@@ -8,17 +8,17 @@ import org.json.JSONArray;
 
 public class Book {
 
-    private JSONArray mAuthor;
+    private String mAuthor;
     private String mTitle;
     private String mLevel;
 
     public Book(JSONArray author, String title, String level){
-        mAuthor = author;
-        mLevel = "By: " + level;
+        mAuthor = "By: " + author;
+        mLevel = "Maturity: " + level;
         mTitle = title;
     }
 
-    public JSONArray getAuthor() {return mAuthor;}
+    public String  getAuthor() {return mAuthor;}
     public String getTitle() {return mTitle;}
     public String getLevel() {return mLevel;}
 }
