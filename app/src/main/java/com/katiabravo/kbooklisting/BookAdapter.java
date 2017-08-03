@@ -14,6 +14,7 @@ import java.util.List;
  */
 
 public class BookAdapter extends ArrayAdapter<Book> {
+
     public BookAdapter(Context context, List<Book> books){
         super(context, 0, books);
     }
@@ -27,16 +28,19 @@ public class BookAdapter extends ArrayAdapter<Book> {
         }
 
         Book currentBook = getItem(position);
+
+        TextView ratingTextView = (TextView) listItemView.findViewById(R.id.rating);
+        ratingTextView.setText(currentBook.getAvgRating());
+
         TextView titleTextView = (TextView) listItemView.findViewById(R.id.title);
         titleTextView.setText(currentBook.getTitle());
 
-        TextView maturityTextView = (TextView) listItemView.findViewById(R.id.maturity);
-        maturityTextView.setText(currentBook.getLevel());
-
         TextView authorTextView = (TextView) listItemView.findViewById(R.id.author);
         authorTextView.setText(currentBook.getAuthor().toString());
+        //remove quotes and squarebrackets
 
-        //TODO: format the author to have all the authors and delete the quotes and squarebracets
+        TextView pgCountTextView = (TextView) listItemView.findViewById(R.id.page_count);
+        pgCountTextView.setText(currentBook.getPgCount());
 
         return listItemView;
     }

@@ -16,7 +16,6 @@ public class BookLoader extends AsyncTaskLoader<List<Book>> {
         super(context);
         mUrl = url;
     }
-
     @Override
     protected void onStartLoading() { forceLoad(); }
 

@@ -7,18 +7,20 @@ import org.json.JSONArray;
  */
 
 public class Book {
-
-    private String mAuthor;
+    private String mAvgRating;
     private String mTitle;
-    private String mLevel;
+    private String mAuthor;
+    private String mPgCount;
 
-    public Book(JSONArray author, String title, String level){
-        mAuthor = "By: " + author;
-        mLevel = "Maturity: " + level;
+    public Book(double avgRating, String title, JSONArray author, int pgCount){
+        if (avgRating == -1.0){mAvgRating = "N/A";} else { mAvgRating = "" + avgRating;}
         mTitle = title;
+        mAuthor = "By: " + author;
+        mPgCount = "Pg count: " + pgCount;
     }
 
-    public String  getAuthor() {return mAuthor;}
+    public String getAvgRating() {return mAvgRating;}
     public String getTitle() {return mTitle;}
-    public String getLevel() {return mLevel;}
+    public String getAuthor() {return mAuthor;}
+    public String getPgCount() {return mPgCount;}
 }

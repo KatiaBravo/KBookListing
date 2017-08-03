@@ -35,7 +35,6 @@ public final class SearchTopic {
         }
         return url;
     }
-
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
         if (url == null){
@@ -68,7 +67,6 @@ public final class SearchTopic {
         }
         return jsonResponse;
     }
-
     /**
      * Convert the {@link InputStream} into a String which contains the
      * whole JSON response from the server.
@@ -86,10 +84,10 @@ public final class SearchTopic {
         }
         return output.toString();
     }
-
     private static List<Book> extractFeatureFromJson(String booksJSON) {
         if(TextUtils.isEmpty(booksJSON)){ return null;}
         List<Book> books = new ArrayList<>();
+        double avgRating = -1.0;
 
         try {
             JSONObject baseJsonResponse = new JSONObject(booksJSON);
@@ -97,10 +95,13 @@ public final class SearchTopic {
             for(int i = 0; i < items.length(); i++) {
                 JSONObject book = items.getJSONObject(i);
                 JSONObject volumeInfo = book.getJSONObject("volumeInfo");
+                if(volumeInfo.has("averageRating")) {
+                    avgRating = volumeInfo.getDouble("averageRating");
+                }
                 String title = volumeInfo.getString("title");
                 JSONArray authors = volumeInfo.getJSONArray("authors");
-                String maturityRating = volumeInfo.getString("maturityRating");
-                books.add(new Book(authors, title, maturityRating));
+                int pageCount = volumeInfo.getInt("pageCount");
+                books.add(new Book(avgRating, title, authors, pageCount));
             }
 
         } catch (JSONException e) {
@@ -109,7 +110,6 @@ public final class SearchTopic {
 
         return books;
     }
-
     public static List<Book> fetchBooks(String requestUrl) {
         URL url = createUrl(requestUrl);
         String jsonResponse = null;
@@ -119,10 +119,9 @@ public final class SearchTopic {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
+        // Extract relevant fields from the JSON response and create a list of {@link Book}s
         List<Book> books = extractFeatureFromJson(jsonResponse);
-
-        // Return the list of {@link Earthquake}s
+        // Return the list of {@link Book}s
         return books;
     }
 }

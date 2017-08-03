@@ -17,20 +17,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookActivity extends AppCompatActivity implements android.app.LoaderManager.LoaderCallbacks<List<Book>> {
-
+    private LoaderManager.LoaderCallbacks<List<Book>> callback;
     private static String BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
     private BookAdapter mAdapter;
     private TextView mEmptyStateTextView;
     private String searchTerm;
     private static final int LOADER_ID = 1;
     private ListView bookListView;
+    private EditText searchBar;
+    private Button searchButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
-        final EditText searchBar = (EditText) findViewById(R.id.search_bar);
-        final Button searchButton = (Button) findViewById(R.id.search_button);
+        searchBar = (EditText) findViewById(R.id.search_bar);
+        searchButton = (Button) findViewById(R.id.search_button);
+        callback = this;
 
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
         bookListView = (ListView) findViewById(R.id.list);
@@ -54,13 +57,19 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
                 bookListView.setEmptyView(mEmptyStateTextView);
                 mEmptyStateTextView.setText(R.string.no_internet);
             }
+
+            if(getLoaderManager().getLoader(LOADER_ID) != null){
+                getLoaderManager().restartLoader(LOADER_ID, null, callback);
+            }else{
+                getLoaderManager().initLoader(LOADER_ID, null, callback);
+            }
             }
         });
     }
 
     @Override
     public android.content.Loader<List<Book>> onCreateLoader(int id, Bundle args) {
-        return new BookLoader(this, BOOK_REQUEST_URL +  searchTerm);
+        return new BookLoader(this, BOOK_REQUEST_URL + searchTerm);
     }
 
     @Override
@@ -71,13 +80,16 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
         mAdapter.clear();
         if (books != null && !books.isEmpty()) {
             mAdapter.addAll(books);
+            new BookLoader(this, BOOK_REQUEST_URL + searchTerm);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
         mAdapter.clear();
+        loader = new BookLoader(this, BOOK_REQUEST_URL + searchTerm);
+        loader.startLoading();
     }
 
-
 }
+
