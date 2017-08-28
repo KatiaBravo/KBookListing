@@ -37,7 +37,6 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         TextView authorTextView = (TextView) listItemView.findViewById(R.id.author);
         authorTextView.setText(currentBook.getAuthor().toString());
-        //remove quotes and squarebrackets
 
         TextView pgCountTextView = (TextView) listItemView.findViewById(R.id.page_count);
         pgCountTextView.setText(currentBook.getPgCount());

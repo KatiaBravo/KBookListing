@@ -26,6 +26,7 @@ public class BookLoader extends AsyncTaskLoader<List<Book>> {
         }
 
         List<Book> books = SearchTopic.fetchBooks(mUrl);
+
         return books;
     }
 }

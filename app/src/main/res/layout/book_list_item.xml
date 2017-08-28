@@ -19,6 +19,7 @@
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:layout_marginLeft="5dp"
         tools:text="8.9"/>
 
     <LinearLayout
@@ -53,6 +54,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:id="@+id/page_count"
                 tools:text="Page count"/>
         </LinearLayout>

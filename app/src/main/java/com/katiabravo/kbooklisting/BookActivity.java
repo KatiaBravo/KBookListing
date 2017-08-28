@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookActivity extends AppCompatActivity implements android.app.LoaderManager.LoaderCallbacks<List<Book>> {
-    private LoaderManager.LoaderCallbacks<List<Book>> callback;
     private static String BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
     private BookAdapter mAdapter;
     private TextView mEmptyStateTextView;
@@ -26,17 +25,23 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
     private ListView bookListView;
     private EditText searchBar;
     private Button searchButton;
+    private View loadingIndicator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
+        loadingIndicator = findViewById(R.id.loading_spinner);
+        loadingIndicator.setVisibility(View.GONE);
+
         searchBar = (EditText) findViewById(R.id.search_bar);
         searchButton = (Button) findViewById(R.id.search_button);
-        callback = this;
 
-        mAdapter = new BookAdapter(this, new ArrayList<Book>());
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         bookListView = (ListView) findViewById(R.id.list);
+        bookListView.setEmptyView(mEmptyStateTextView);
+        mAdapter = new BookAdapter(this, new ArrayList<Book>());
         bookListView.setAdapter(mAdapter);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +49,7 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
             public void onClick(View view) {
             searchTerm = searchBar.getText().toString().replaceAll(" ", "+");
             mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+            loadingIndicator.setVisibility(View.VISIBLE);
 
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -52,20 +58,25 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
                 LoaderManager loaderManager = getLoaderManager();
                 loaderManager.initLoader(LOADER_ID, null, BookActivity.this);
             } else {
-                View loadingIndicator = findViewById(R.id.loading_spinner);
                 loadingIndicator.setVisibility(View.GONE);
                 bookListView.setEmptyView(mEmptyStateTextView);
                 mEmptyStateTextView.setText(R.string.no_internet);
             }
 
             if(getLoaderManager().getLoader(LOADER_ID) != null){
-                getLoaderManager().restartLoader(LOADER_ID, null, callback);
+                getLoaderManager().restartLoader(LOADER_ID, null, BookActivity.this);
             }else{
-                getLoaderManager().initLoader(LOADER_ID, null, callback);
+                getLoaderManager().initLoader(LOADER_ID, null, BookActivity.this);
             }
             }
         });
     }
+
+   /* @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState = ;
+    }*/
 
     @Override
     public android.content.Loader<List<Book>> onCreateLoader(int id, Bundle args) {
@@ -74,22 +85,17 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> books) {
-        View loadingIndicator = findViewById(R.id.loading_spinner);
         loadingIndicator.setVisibility(View.GONE);
         mEmptyStateTextView.setText(R.string.no_books);
         mAdapter.clear();
         if (books != null && !books.isEmpty()) {
             mAdapter.addAll(books);
-            new BookLoader(this, BOOK_REQUEST_URL + searchTerm);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
         mAdapter.clear();
-        loader = new BookLoader(this, BOOK_REQUEST_URL + searchTerm);
-        loader.startLoading();
     }
-
 }
 

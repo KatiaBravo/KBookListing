@@ -11,12 +11,15 @@ public class Book {
     private String mTitle;
     private String mAuthor;
     private String mPgCount;
+    private String authorString;
+    public static String na = "N/A";
 
     public Book(double avgRating, String title, JSONArray author, int pgCount){
-        if (avgRating == -1.0){mAvgRating = "N/A";} else { mAvgRating = "" + avgRating;}
+        if (avgRating == -1.0){mAvgRating = na;} else { mAvgRating = "" + avgRating;}
+        if (pgCount == -1){mPgCount = "Page Count: " + na;} else { mPgCount = "Pg count: " + pgCount;}
         mTitle = title;
-        mAuthor = "By: " + author;
-        mPgCount = "Pg count: " + pgCount;
+        authorString = "" + author;
+        mAuthor = "By: " + authorString.replace("[", "").replace("]", "").replaceAll("\"", "").replaceAll(",", ", ");
     }
 
     public String getAvgRating() {return mAvgRating;}
@@ -24,3 +27,5 @@ public class Book {
     public String getAuthor() {return mAuthor;}
     public String getPgCount() {return mPgCount;}
 }
+
+//TODO: make sure it is rotatable

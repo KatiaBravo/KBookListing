@@ -86,8 +86,7 @@ public final class SearchTopic {
     }
     private static List<Book> extractFeatureFromJson(String booksJSON) {
         if(TextUtils.isEmpty(booksJSON)){ return null;}
-        List<Book> books = new ArrayList<>();
-        double avgRating = -1.0;
+        ArrayList<Book> books = new ArrayList<>();
 
         try {
             JSONObject baseJsonResponse = new JSONObject(booksJSON);
@@ -95,21 +94,40 @@ public final class SearchTopic {
             for(int i = 0; i < items.length(); i++) {
                 JSONObject book = items.getJSONObject(i);
                 JSONObject volumeInfo = book.getJSONObject("volumeInfo");
+                double avgRating;
                 if(volumeInfo.has("averageRating")) {
                     avgRating = volumeInfo.getDouble("averageRating");
+                } else {
+                    avgRating = -1.0;
                 }
-                String title = volumeInfo.getString("title");
-                JSONArray authors = volumeInfo.getJSONArray("authors");
-                int pageCount = volumeInfo.getInt("pageCount");
+                String title;
+                if(volumeInfo.has("title")) {
+                    title = volumeInfo.getString("title");
+                } else {
+                    title = Book.na;
+                }
+                JSONArray authors;
+                if (volumeInfo.has("authors")){
+                    authors = volumeInfo.getJSONArray("authors");
+                }else {
+                    authors = null;
+                }
+                int pageCount;
+                if(volumeInfo.has("pageCount")){
+                    pageCount = volumeInfo.getInt("pageCount");
+                }else{
+                    pageCount = -1;
+                }
                 books.add(new Book(avgRating, title, authors, pageCount));
             }
 
         } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the book JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
         }
 
         return books;
     }
+
     public static List<Book> fetchBooks(String requestUrl) {
         URL url = createUrl(requestUrl);
         String jsonResponse = null;
@@ -124,4 +142,5 @@ public final class SearchTopic {
         // Return the list of {@link Book}s
         return books;
     }
+
 }
