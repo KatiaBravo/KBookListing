@@ -1,6 +1,5 @@
 package com.katiabravo.kbooklisting;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.net.ConnectivityManager;
@@ -20,7 +19,7 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
     private static String BOOK_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
     private BookAdapter mAdapter;
     private TextView mEmptyStateTextView;
-    private String searchTerm;
+    private String searchTerm = "";
     private static final int LOADER_ID = 1;
     private ListView bookListView;
     private EditText searchBar;
@@ -44,6 +43,8 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
         bookListView.setAdapter(mAdapter);
 
+        getLoaderManager().initLoader(LOADER_ID, null, BookActivity.this);
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,29 +56,21 @@ public class BookActivity extends AppCompatActivity implements android.app.Loade
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
                 mEmptyStateTextView.setVisibility(View.GONE);
-                LoaderManager loaderManager = getLoaderManager();
-                loaderManager.initLoader(LOADER_ID, null, BookActivity.this);
+                if(getLoaderManager().getLoader(LOADER_ID) != null){
+                    getLoaderManager().restartLoader(LOADER_ID, null, BookActivity.this);
+                }else{
+                    getLoaderManager().initLoader(LOADER_ID, null, BookActivity.this);
+                }
             } else {
                 loadingIndicator.setVisibility(View.GONE);
                 bookListView.setEmptyView(mEmptyStateTextView);
                 mEmptyStateTextView.setText(R.string.no_internet);
             }
-
-            if(getLoaderManager().getLoader(LOADER_ID) != null){
-                getLoaderManager().restartLoader(LOADER_ID, null, BookActivity.this);
-            }else{
-                getLoaderManager().initLoader(LOADER_ID, null, BookActivity.this);
-            }
             }
         });
     }
 
-   /* @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState = ;
-    }*/
-
+    // Methods of LoaderManager.LoaderCallbacks interface
     @Override
     public android.content.Loader<List<Book>> onCreateLoader(int id, Bundle args) {
         return new BookLoader(this, BOOK_REQUEST_URL + searchTerm);
