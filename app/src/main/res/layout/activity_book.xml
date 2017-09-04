@@ -14,7 +14,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/search_bar"
-            android:hint="Search..."
+            android:hint="@string/hint"
             android:layout_weight="10"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/darker_gray"/>
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/search_button"
-            android:text="Search"
+            android:text="@string/search"
             android:layout_weight="0.5"/>
     </LinearLayout>
 
